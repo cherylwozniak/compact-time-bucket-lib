@@ -27,3 +27,10 @@ The trade-off is that timestamps before the first boundary are clamped into the 
 ## Edge you will hit
 
 A timestamp exactly on a boundary belongs to the bucket that starts there: buckets are half-open `[start, end)`. The final bucket is open-ended and absorbs every timestamp at or beyond the last boundary. Unlabeled buckets are keyed in `group()` by their start offset as a string, so mixing labeled and unlabeled buckets in one call is not supported.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
